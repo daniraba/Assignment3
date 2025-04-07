@@ -58,10 +58,10 @@ public class Assignment3 {
         return breaks;
     }
 
-    public static void justify(String[] W, int w, List<Integer> breaks) {
-        for (int i = 0; i < breaks.size(); i++) {
-            int start = breaks.get(i);
-            int end = (i + 1 < breaks.size()) ? breaks.get(i + 1) : W.length;
+    public static void justify(String[] W, int w, List<Integer> L) {
+        for (int i = 0; i < L.size(); i++) {
+            int start = L.get(i);
+            int end = (i + 1 < L.size()) ? L.get(i + 1) : W.length;
             int length = 0;
             for (int j = start; j < end; j++) {
                 length += W[j].length();
