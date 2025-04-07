@@ -15,7 +15,7 @@ import java.util.*;
  */
 public class Assignment3 {
 
-    public static int totalLength(String[] W, int i, int j) {
+    public static int totalLength(String[] W, int i, int j) { // calculate the total length of words with spaces
         int length = 0;
         for (int k = i; k < j; k++) {
             length += W[k].length();
@@ -26,7 +26,7 @@ public class Assignment3 {
         return length;
     }
 
-    public static int badness(String[] W, int i, int j, int w) {
+    public static int badness(String[] W, int i, int j, int w) { // calculate the badness of a line of words
         int lineLength = totalLength(W, i, j);
         if (lineLength > w) {
             return Integer.MAX_VALUE;
@@ -36,7 +36,7 @@ public class Assignment3 {
         }
     }
 
-    public static int memoizedMinimumBadness(String[] W, int i, int[] memo, int[] linebreaks_memo, int w) {
+    public static int memoizedMinimumBadness(String[] W, int i, int[] memo, int[] linebreaks_memo, int w) { // compute minimum badness using memoization
         if (memo[i] >= 0) {
             return memo[i];
         }
@@ -60,19 +60,19 @@ public class Assignment3 {
         return memo[i];
     }
 
-    public static int[] split(String[] W, int w) {
+    public static int[] split(String[] W, int w) { // split words into lines to minimize aggregated badness
         int n = W.length;
         int[] memo = new int[n + 1];
-        int[] linebreaks_memo = new int[n + 1];
+        int[] linebreaks_memo = new int[n + 1]; // list of indices of the badness of all lines in split
         for (int i = 0; i <= n; i++) {
             memo[i] = -1;
         }
         memoizedMinimumBadness(W, 0, memo, linebreaks_memo, w);
-        return linebreaks_memo;
+        return linebreaks_memo; 
     }
 
-    public static String justify(String[] W, int w, int[] L) {
-        StringBuilder justifiedText = new StringBuilder();
+    public static String justify(String[] W, int w, int[] L) { // generated justified text based on indices of split
+        StringBuilder justifiedText = new StringBuilder(); // mutable strings
         for (int i = 0; i < L.length - 1; i++) {
             int start = L[i];
             int end = L[i + 1];
@@ -81,7 +81,7 @@ public class Assignment3 {
             int gaps = end - start - 1;
             StringBuilder line = new StringBuilder();
             if (gaps > 0) {
-                int spaceBetweenWords = spaces / gaps;
+                int spaceBetweenWords = spaces / gaps; // fix spacing
                 int extraSpaces = spaces % gaps;
                 for (int j = start; j < end; j++) {
                     line.append(W[j]);
@@ -105,7 +105,7 @@ public class Assignment3 {
         return justifiedText.toString();
     }
 
-    public static void writeToFile(String filename, String content) throws IOException {
+    public static void writeToFile(String filename, String content) throws IOException { // write content to a file for just.txt and unjust.txt
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
             writer.write(content);
         }
@@ -118,7 +118,7 @@ public class Assignment3 {
         System.out.print("Enter the page width: ");
         int w = scanner.nextInt();
         String[] W = new String[n];
-        Random random = new Random();
+        Random random = new Random(); // generate random words
         for (int i = 0; i < n; i++) {
             int length = random.nextInt(15) + 1;
             StringBuilder word = new StringBuilder();
