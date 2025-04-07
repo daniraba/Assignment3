@@ -1,14 +1,11 @@
+/*
+CS242 - Spring 2025 - Assignment #3
+Team Members: Daniella Rabayev and Daisy Molina
+*/
+
 import java.io.*;
 import java.util.*;
 
-/**
- * CS242 - Spring 2025 - Assignment #3
- * 
- * Team Members: Daniella Rabayev and Daisy Molina
- * 
- * This class implements dynamic programming for text justification
- * following LaTeX rules, compared with greedy approach.
- */
 public class Assignment3 {
 
     public static int totalLength(String[] W, int i, int j) { // calculate the total length of words with spaces
