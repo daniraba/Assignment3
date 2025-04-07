@@ -1,4 +1,4 @@
-public class TextJustifier {
+public class Assigment3 {
 
     public static int totalLength(String[] W, int i, int j) {
         int length = 0;
