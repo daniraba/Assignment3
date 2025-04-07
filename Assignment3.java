@@ -1,5 +1,18 @@
+import java.io.*;
 import java.util.*;
 
+/**
+ * CS242 - Spring 2025 - Assignment #3
+ * 
+ * Team Members:
+ * [Your Name]
+ * [Team Member Name]
+ * 
+ * Collaborators: Daniella Rabayev and Daisy Molina
+ * 
+ * This class implements dynamic programming for text justification
+ * following LaTeX rules, compared with greedy approach.
+ */
 public class Assignment3 {
 
     public static int totalLength(String[] W, int i, int j) {
@@ -7,7 +20,9 @@ public class Assignment3 {
         for (int k = i; k < j; k++) {
             length += W[k].length();
         }
-        length += (j - i - 1); // spaces between words
+        if (j > i) {
+            length += (j - i - 1); // Adding spaces between words
+        }
         return length;
     }
 
@@ -21,93 +36,104 @@ public class Assignment3 {
         }
     }
 
-    public static int memoizedMinBadness(String[] W, int i, int[] memo, int[] linebreaks_memo, int w) {
-        if (memo[i] >= 0) return memo[i];
+    public static int memoizedMinimumBadness(String[] W, int i, int[] memo, int[] linebreaks_memo, int w) {
+        if (memo[i] >= 0) {
+            return memo[i];
+        }
         if (i == W.length) {
             memo[i] = 0;
             linebreaks_memo[i] = W.length;
-            return 0;
-        }
-        int minBadness = Integer.MAX_VALUE;
-        int indexOfMin = 0;
-        for (int j = i + 1; j <= W.length; j++) {
-            int temp = badness(W, i, j, w);
-            if (temp == Integer.MAX_VALUE) break;
-            temp += memoizedMinBadness(W, j, memo, linebreaks_memo, w);
-            if (temp < minBadness) {
-                minBadness = temp;
-                indexOfMin = j;
-            }
-        }
-        memo[i] = minBadness;
-        linebreaks_memo[i] = indexOfMin;
-        return minBadness;
-    }
-
-    public static List<Integer> split(String[] W, int w) {
-        int n = W.length;
-        int[] memo = new int[n + 1];
-        int[] lineBreaks = new int[n + 1];
-        Arrays.fill(memo, -1);
-        memoizedMinBadness(W, 0, memo, lineBreaks, w);
-
-        List<Integer> breaks = new ArrayList<>();
-        for (int i = 0; i < n; i = lineBreaks[i]) {
-            breaks.add(i);
-        }
-        return breaks;
-    }
-
-    public static void justify(String[] W, int w, List<Integer> L) {
-        for (int i = 0; i < L.size(); i++) {
-            int start = L.get(i);
-            int end = (i + 1 < L.size()) ? L.get(i + 1) : W.length;
-            int length = 0;
-            for (int j = start; j < end; j++) {
-                length += W[j].length();
-            }
-            int spaces = w - length;
-            int gaps = end - start - 1;
-            StringBuilder line = new StringBuilder();
-            for (int j = start; j < end; j++) {
-                line.append(W[j]);
-                if (j < end - 1) {
-                    int spaceToAdd = gaps == 0 ? 0 : spaces / gaps + (j - start < spaces % gaps ? 1 : 0);
-                    line.append(" ".repeat(spaceToAdd));
+        } else {
+            int minBadness = Integer.MAX_VALUE;
+            int indexOfMin = 0;
+            for (int j = i + 1; j <= W.length; j++) {
+                int temp = badness(W, i, j, w);
+                temp += memoizedMinimumBadness(W, j, memo, linebreaks_memo, w);
+                if (temp < minBadness) {
+                    minBadness = temp;
+                    indexOfMin = j;
                 }
             }
-            System.out.println(line.toString());
+            memo[i] = minBadness;
+            linebreaks_memo[i] = indexOfMin;
+        }
+        return memo[i];
+    }
+
+    public static int[] split(String[] W, int w) {
+        int n = W.length;
+        int[] memo = new int[n + 1];
+        int[] linebreaks_memo = new int[n + 1];
+        for (int i = 0; i <= n; i++) {
+            memo[i] = -1;
+        }
+        memoizedMinimumBadness(W, 0, memo, linebreaks_memo, w);
+        return linebreaks_memo;
+    }
+
+    public static String justify(String[] W, int w, int[] L) {
+        StringBuilder justifiedText = new StringBuilder();
+        for (int i = 0; i < L.length - 1; i++) {
+            int start = L[i];
+            int end = L[i + 1];
+            int totalLength = totalLength(W, start, end);
+            int spaces = w - totalLength;
+            int gaps = end - start - 1;
+            StringBuilder line = new StringBuilder();
+            if (gaps > 0) {
+                int spaceBetweenWords = spaces / gaps;
+                int extraSpaces = spaces % gaps;
+                for (int j = start; j < end; j++) {
+                    line.append(W[j]);
+                    if (j < end - 1) {
+                        for (int k = 0; k < spaceBetweenWords; k++) {
+                            line.append(' ');
+                        }
+                        if (j - start < extraSpaces) {
+                            line.append(' ');
+                        }
+                    }
+                }
+            } else {
+                line.append(W[start]);
+                for (int j = 0; j < spaces; j++) {
+                    line.append(' ');
+                }
+            }
+            justifiedText.append(line.toString()).append('\n');
+        }
+        return justifiedText.toString();
+    }
+
+    public static void writeToFile(String filename, String content) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filename))) {
+            writer.write(content);
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter page width (w): ");
-        int width = scanner.nextInt();
-        System.out.print("Enter number of words (n): ");
+        System.out.print("Enter the number of words: ");
         int n = scanner.nextInt();
-        scanner.close();
-
-        // Generate random words
+        System.out.print("Enter the page width: ");
+        int w = scanner.nextInt();
         String[] W = new String[n];
         Random random = new Random();
         for (int i = 0; i < n; i++) {
-            int wordLength = random.nextInt(15) + 1;
-            char[] word = new char[wordLength];
-            Arrays.fill(word, 'a');
-            W[i] = new String(word);
+            int length = random.nextInt(15) + 1;
+            StringBuilder word = new StringBuilder();
+            for (int j = 0; j < length; j++) {
+                word.append('a');
+            }
+            W[i] = word.toString();
         }
-
-        // Print unjustified output
-        System.out.println("Unjustified output:");
+        int[] L = split(W, w);
+        String justifiedText = justify(W, w, L);
+        writeToFile("just.txt", justifiedText);
+        StringBuilder unjustText = new StringBuilder();
         for (String word : W) {
-            System.out.print(word + " ");
+            unjustText.append(word).append(' ');
         }
-        System.out.println();
-
-        // Print justified output
-        System.out.println("Justified output:");
-        List<Integer> breaks = split(W, width);
-        justify(W, width, breaks);
+        writeToFile("unjust.txt", unjustText.toString().trim());
     }
 }
