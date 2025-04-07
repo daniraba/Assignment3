@@ -4,11 +4,7 @@ import java.util.*;
 /**
  * CS242 - Spring 2025 - Assignment #3
  * 
- * Team Members:
- * [Your Name]
- * [Team Member Name]
- * 
- * Collaborators: Daniella Rabayev and Daisy Molina
+ * Team Members: Daniella Rabayev and Daisy Molina
  * 
  * This class implements dynamic programming for text justification
  * following LaTeX rules, compared with greedy approach.
