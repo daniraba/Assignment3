@@ -1,25 +1,24 @@
 import java.io.*;
 import java.util.*;
 
-public class Assigment3 {
+public class Assignment3 {
 
     public static int totalLength(String[] W, int i, int j) {
         int length = 0;
         for (int k = i; k < j; k++) {
             length += W[k].length();
         }
-
-        length += (j - i - 1); // Add spaces between words
+        length += (j - i - 1); // spaces between words
         return length;
     }
 
-    public static int badness(String[] W, int i , int j, int width) {
+    public static int badness(String[] W, int i, int j, int width) {
         int lineLength = totalLength(W, i, j);
         if (lineLength > width) {
-            return Integer.MAX_VALUE; // Badness is infinite if line exceeds width
+            return Integer.MAX_VALUE;
         } else {
             int extraSpaces = width - lineLength;
-            return extraSpaces * extraSpaces; // Badness is the square of extra spaces
+            return extraSpaces * extraSpaces;
         }
     }
 
@@ -46,14 +45,13 @@ public class Assigment3 {
         return minBadness;
     }
 
-    // Method to determine line breaks
     public static List<Integer> split(String[] W, int width) {
         int n = W.length;
         int[] memo = new int[n + 1];
         int[] lineBreaks = new int[n + 1];
         Arrays.fill(memo, -1);
         memoizedMinBadness(W, 0, memo, lineBreaks, width);
-        
+
         List<Integer> breaks = new ArrayList<>();
         for (int i = 0; i < n; i = lineBreaks[i]) {
             breaks.add(i);
@@ -61,7 +59,6 @@ public class Assigment3 {
         return breaks;
     }
 
-    // Justify text based on line breaks
     public static void justify(String[] W, int width, List<Integer> breaks, String filename) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
         for (int i = 0; i < breaks.size(); i++) {
@@ -77,7 +74,7 @@ public class Assigment3 {
             for (int j = start; j < end; j++) {
                 line.append(W[j]);
                 if (j < end - 1) {
-                    int spaceToAdd = spaces / gaps + (j - start < spaces % gaps ? 1 : 0);
+                    int spaceToAdd = gaps == 0 ? 0 : spaces / gaps + (j - start < spaces % gaps ? 1 : 0);
                     line.append(" ".repeat(spaceToAdd));
                 }
             }
@@ -86,28 +83,31 @@ public class Assigment3 {
         }
         writer.close();
     }
+
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter number of words (n): ");
-        int n = scanner.nextInt();
         System.out.print("Enter page width (ω): ");
         int width = scanner.nextInt();
         scanner.close();
-        
-        Random random = new Random();
-        String[] W = new String[n];
-        for (int i = 0; i < n; i++) {
-            int length = 1 + random.nextInt(15);
-            W[i] = "a".repeat(length);
+
+        // Read input words from file
+        List<String> wordList = new ArrayList<>();
+        try (Scanner fileScanner = new Scanner(new File("sample.txt"))) {
+            while (fileScanner.hasNext()) {
+                wordList.add(fileScanner.next());
+            }
         }
-        
+        String[] W = wordList.toArray(new String[0]);
+
+        // Write unjustified output
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("unjust.txt"))) {
+            for (String word : W) {
+                writer.write(word + " ");
+            }
+        }
+
+        // Write justified output
         List<Integer> breaks = split(W, width);
         justify(W, width, breaks, "just.txt");
-        
-        BufferedWriter writer = new BufferedWriter(new FileWriter("unjust.txt"));
-        for (String word : W) {
-            writer.write(word + " ");
-        }
-        writer.close();
     }
 }
