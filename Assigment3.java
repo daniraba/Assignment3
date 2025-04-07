@@ -86,16 +86,7 @@ public class Assigment3 {
         }
         writer.close();
     }
-
-    public static void main (String[] args) {
-        String[] W = {"This", "is", "an", "example", "line"};
-        int width = 20;
-
-        System.out.println("Badness: " + badness(W, 0, 3, width)); // Example usage
-    }
-
-    /*
-     * public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter number of words (n): ");
         int n = scanner.nextInt();
@@ -119,5 +110,4 @@ public class Assigment3 {
         }
         writer.close();
     }
-     */
 }
