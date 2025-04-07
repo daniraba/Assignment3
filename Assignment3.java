@@ -1,6 +1,8 @@
 /*
 CS242 - Spring 2025 - Assignment #3
 Team Members: Daniella Rabayev and Daisy Molina
+
+The just.txt file has all of the words with no spacing in between, and it takes up a lot of lines with one word per line. The unjust.txt file has words with various spacing in between, and the words are dispersed across less lines than the just.txt file.
 */
 
 import java.io.*;
