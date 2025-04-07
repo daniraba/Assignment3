@@ -18,7 +18,7 @@ public class Assignment3 {
             return Integer.MAX_VALUE;
         } else {
             int extraSpaces = width - lineLength;
-            return extraSpaces * extraSpaces;
+            return extraSpaces * extraSpaces * extraSpaces;
         }
     }
 
@@ -86,18 +86,21 @@ public class Assignment3 {
 
     public static void main(String[] args) throws IOException {
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter page width (ω): ");
+        System.out.print("Enter page width (w): ");
         int width = scanner.nextInt();
+        System.out.print("Enter number of words (n): ");
+        int n = scanner.nextInt();
         scanner.close();
 
-        // Read input words from file
-        List<String> wordList = new ArrayList<>();
-        try (Scanner fileScanner = new Scanner(new File("sample.txt"))) {
-            while (fileScanner.hasNext()) {
-                wordList.add(fileScanner.next());
-            }
+        // Generate random words
+        String[] W = new String[n];
+        Random random = new Random();
+        for (int i = 0; i < n; i++) {
+            int wordLength = random.nextInt(15) + 1;
+            char[] word = new char[wordLength];
+            Arrays.fill(word, 'a');
+            W[i] = new String(word);
         }
-        String[] W = wordList.toArray(new String[0]);
 
         // Write unjustified output
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("unjust.txt"))) {
