@@ -1,4 +1,3 @@
-import java.io.*;
 import java.util.*;
 
 public class Assignment3 {
@@ -59,8 +58,7 @@ public class Assignment3 {
         return breaks;
     }
 
-    public static void justify(String[] W, int w, List<Integer> breaks, String filename) throws IOException {
-        BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
+    public static void justify(String[] W, int w, List<Integer> breaks) {
         for (int i = 0; i < breaks.size(); i++) {
             int start = breaks.get(i);
             int end = (i + 1 < breaks.size()) ? breaks.get(i + 1) : W.length;
@@ -78,13 +76,11 @@ public class Assignment3 {
                     line.append(" ".repeat(spaceToAdd));
                 }
             }
-            writer.write(line.toString());
-            writer.newLine();
+            System.out.println(line.toString());
         }
-        writer.close();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter page width (w): ");
         int width = scanner.nextInt();
@@ -102,15 +98,16 @@ public class Assignment3 {
             W[i] = new String(word);
         }
 
-        // Write unjustified output
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter("unjust.txt"))) {
-            for (String word : W) {
-                writer.write(word + " ");
-            }
+        // Print unjustified output
+        System.out.println("Unjustified output:");
+        for (String word : W) {
+            System.out.print(word + " ");
         }
+        System.out.println();
 
-        // Write justified output
+        // Print justified output
+        System.out.println("Justified output:");
         List<Integer> breaks = split(W, width);
-        justify(W, width, breaks, "just.txt");
+        justify(W, width, breaks);
     }
 }
